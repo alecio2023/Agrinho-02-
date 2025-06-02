@@ -1,0 +1,186 @@
+let perguntas = [];
+let perguntaAtual = 0;
+let pontuacao = 0;
+let estadoJogo = "inicio"; // pode ser "inicio", "jogando", "fim"
+let botaoIniciar, botaoProxima;
+
+function setup() {
+  createCanvas(800, 600);
+  
+  // Definindo as perguntas e respostas
+  perguntas = [
+    {
+      pergunta: "Qual é o significado da palavra Campo?",
+      opcoes: [
+        "Um terreno plantado com culturas como milho e trigo",
+        "Uma área urbana com muitos prédios",
+        "Um local para eventos esportivos",
+        "Uma floresta densa"
+      ],
+      respostaCorreta: 0,
+      explicacao: "Segundo o Dicionário Saraiva Jovem: Campo é um terreno plantado, com plantações."
+    },
+    {
+      pergunta: "Qual o significado da palavra Cidade?",
+      opcoes: [
+        "Um local isolado sem habitantes",
+        "Uma aglomeração humana com atividades comerciais e culturais",
+        "Uma área rural com plantações",
+        "Um parque natural"
+      ],
+      respostaCorreta: 1,
+      explicacao: "Cidade é uma aglomeração humana que concentra atividades comerciais, culturais e industriais."
+    },
+    {
+      pergunta: "Qual o significado da palavra Festejando?",
+      opcoes: [
+        "Trabalhar no campo",
+        "Fazer festa em honra de algo",
+        "Construir uma cidade",
+        "Viajar entre campo e cidade"
+      ],
+      respostaCorreta: 1,
+      explicacao: "Festejando significa fazer festa em honra de algo, celebrar."
+    },
+    {
+      pergunta: "Qual a importância do campo para a cidade?",
+      opcoes: [
+        "Fornece recursos essenciais como alimentos e matéria-prima",
+        "Fornece tecnologia avançada",
+        "Fornece serviços financeiros",
+        "Fornece entretenimento digital"
+      ],
+      respostaCorreta: 0,
+      explicacao: "O campo fornece recursos essenciais para a sobrevivência e funcionamento das áreas urbanas."
+    },
+    {
+      pergunta: "Qual a importância da cidade para o campo?",
+      opcoes: [
+        "Serve como mercado consumidor para os produtos do campo",
+        "Fornece sementes para plantio",
+        "Controla o clima para o campo",
+        "Substitui completamente a necessidade do campo"
+      ],
+      respostaCorreta: 0,
+      explicacao: "A cidade é fundamental para o campo como mercado consumidor, comprando os alimentos produzidos."
+    }
+  ];
+
+  // Criando botões
+  botaoIniciar = createButton('Iniciar Jogo');
+  botaoIniciar.position(width/2 - 70, height/2 + 50);
+  botaoIniciar.mousePressed(iniciarJogo);
+  botaoIniciar.hide();
+  
+  botaoProxima = createButton('Próxima Pergunta');
+  botaoProxima.position(width/2 - 80, height - 50);
+  botaoProxima.mousePressed(proximaPergunta);
+  botaoProxima.hide();
+}
+
+function draw() {
+  background(220);
+  
+  if (estadoJogo === "inicio") {
+    telaInicial();
+  } else if (estadoJogo === "jogando") {
+    mostrarPergunta();
+  } else if (estadoJogo === "fim") {
+    telaFinal();
+  }
+}
+
+function telaInicial() {
+  textSize(24);
+  fill(0);
+  textAlign(CENTER);
+  text("Festejando a Conexão do Campo e Cidade", width/2, 100);
+  
+  textSize(18);
+  text("Olá! Vamos jogar um jogo de perguntas e respostas sobre", width/2, 150);
+  text("a importante relação entre o campo e a cidade.", width/2, 180);
+  
+  botaoIniciar.show();
+}
+
+function iniciarJogo() {
+  estadoJogo = "jogando";
+  botaoIniciar.hide();
+  botaoProxima.hide();
+  perguntaAtual = 0;
+  pontuacao = 0;
+}
+
+function mostrarPergunta() {
+  let p = perguntas[perguntaAtual];
+  
+  textSize(22);
+  fill(0);
+  textAlign(CENTER);
+  text("Pergunta " + (perguntaAtual + 1) + ":", width/2, 80);
+  text(p.pergunta, width/2, 120);
+  
+  // Mostrar opções
+  textSize(18);
+  textAlign(LEFT);
+  for (let i = 0; i < p.opcoes.length; i++) {
+    let y = 180 + i * 50;
+    fill(0);
+    rect(150, y - 20, 20, 20);
+    fill(0);
+    text(p.opcoes[i], 180, y);
+  }
+  
+  // Mostrar explicação se já respondeu
+  if (p.respostaSelecionada !== undefined) {
+    textSize(16);
+    textAlign(CENTER);
+    fill(0, 100, 0);
+    text(p.explicacao, width/2, 400);
+    
+    if (perguntaAtual < perguntas.length - 1) {
+      botaoProxima.show();
+    } else {
+      estadoJogo = "fim";
+    }
+  }
+}
+
+function mousePressed() {
+  if (estadoJogo === "jogando") {
+    let p = perguntas[perguntaAtual];
+    
+    // Verificar clique nas opções
+    for (let i = 0; i < p.opcoes.length; i++) {
+      let y = 180 + i * 50;
+      if (mouseX > 150 && mouseX < 170 && mouseY > y - 20 && mouseY < y) {
+        p.respostaSelecionada = i;
+        
+        if (i === p.respostaCorreta) {
+          pontuacao++;
+        }
+      }
+    }
+  }
+}
+
+function proximaPergunta() {
+  perguntaAtual++;
+  botaoProxima.hide();
+}
+
+function telaFinal() {
+  textSize(24);
+  fill(0);
+  textAlign(CENTER);
+  text("Fim do Jogo!", width/2, 100);
+  
+  textSize(20);
+  text("Sua pontuação: " + pontuacao + " de " + perguntas.length, width/2, 150);
+  
+  textSize(18);
+  text("Sem o campo a cidade não sobrevive, e estamos festejando", width/2, 200);
+  text("essa relação maravilhosa entre campo e cidade!", width/2, 230);
+  
+  text("Obrigado por jogar!", width/2, 300);
+}
